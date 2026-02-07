@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Virtual Rose Day</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Georgia', serif;
+}
+
+body {
+  background: radial-gradient(#1b1b1b, #000);
+  color: white;
+  overflow: hidden;
+  text-align: center;
+}
+
+.screen {
+  display: none;
+  height: 100vh;
+  width: 100vw;
+  padding: 30px;
+}
+
+.active {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Envelope */
+.envelope {
+  width: 280px;
+  height: 180px;
+  background: #f5f5f5;
+  position: relative;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.envelope::before {
+  content: '';
+  position: absolute;
+  top: -90px;
+  left: 0;
+  width: 0;
+  height: 0;
+  border-left: 140px solid transparent;
+  border-right: 140px solid transparent;
+  border-bottom: 90px solid #e0e0e0;
+}
+
+.qr {
+  margin-top: 20px;
+}
+
+/* Buttons */
+button {
+  margin-top: 25px;
+  padding: 10px 30px;
+  background: transparent;
+  border: 1px solid white;
+  color: white;
+  cursor: pointer;
+  letter-spacing: 2px;
+  transition: 0.3s;
+}
+
+button:hover {
+  background: white;
+  color: black;
+}
+
+/* Falling petals */
+.petal {
+  position: fixed;
+  top: -10%;
+  animation: fall linear infinite;
+  opacity: 0.8;
+}
+
+@keyframes fall {
+  to {
+    transform: translateY(120vh) rotate(360deg);
+  }
+}
+
+/* Origami rose */
+.origami {
+  width: 200px;
+  cursor: pointer;
+  transition: transform 1.5s;
+}
+
+.origami.open {
+  transform: scale(1.2) rotate(360deg);
+}
+
+/* Rose selection */
+.roses {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 15px;
+  margin-top: 30px;
+}
+
+.rose {
+  padding: 15px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 14px;
+  color: black;
+}
+
+.red { background: #c1121f; }
+.white { background: #f1f1f1; }
+.pink { background: #ffafcc; }
+.yellow { background: #ffd60a; }
+.orange { background: #fb8500; }
+.lavender { background: #cdb4db; }
+
+.message {
+  margin-top: 20px;
+  font-style: italic;
+  max-width: 600px;
+}
+</style>
+</head>
+
+<body>
+
+<!-- Screen 1: Envelope -->
+<div id="envelope" class="screen active">
+  <div class="envelope" onclick="goToBouquet()"></div>
+  <div class="qr">
+    <p>Scan the QR code on the envelope 💌</p>
+  </div>
+</div>
+
+<!-- Screen 2: Bouquet -->
+<div id="bouquet" class="screen">
+  <h1>🌹</h1>
+  <h2>A bouquet just for you</h2>
+  <button onclick="showOrigami()">NEXT</button>
+</div>
+
+<!-- Screen 3: Origami -->
+<div id="origami" class="screen">
+  <p>⬇ Click me</p>
+  <img src="https://i.imgur.com/Q9XzvQm.png" class="origami" onclick="openRose()">
+  <p id="secret" class="message"></p>
+  <button onclick="showColors()">NEXT</button>
+</div>
+
+<!-- Screen 4: Rose meanings -->
+<div id="colors" class="screen">
+  <h2>Check Every Rose 🌹</h2>
+  <div class="roses">
+    <div class="rose red" onclick="msg('Red Rose – My heart chose you, and it will choose you every lifetime.')">Red</div>
+    <div class="rose white" onclick="msg('White Rose – With you, love feels pure, peaceful, and eternal.')">White</div>
+    <div class="rose pink" onclick="msg('Pink Rose – Every smile of yours makes me fall deeper in love.')">Pink</div>
+    <div class="rose yellow" onclick="msg('Yellow Rose – You’re the warmth that lights up my darkest days.')">Yellow</div>
+    <div class="rose orange" onclick="msg('Orange Rose – My soul burns with love and desire just for you.')">Orange</div>
+    <div class="rose lavender" onclick="msg('Lavender Rose – Loving you feels like destiny written in stars.')">Lavender</div>
+  </div>
+  <p id="colorMsg" class="message"></p>
+  <button onclick="showFinal()">NEXT</button>
+</div>
+
+<!-- Screen 5: Final -->
+<div id="final" class="screen">
+  <h1>I LOVE YOU ❤️</h1>
+  <button onclick="exit()">Leave the site… Thank you</button>
+</div>
+
+<script>
+function show(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+function goToBouquet() {
+  show('bouquet');
+  petals();
+}
+
+function showOrigami() {
+  show('origami');
+}
+
+function openRose() {
+  document.querySelector('.origami').classList.add('open');
+  document.getElementById('secret').innerText =
+  "On this Rose Day, I want you to know that you’re my favorite blessing. You make my world brighter just by being in it, and loving you feels as natural as breathing. Like a rose that blooms quietly yet beautifully, our love has become my comfort and my strength. I’m so lucky to call you mine.";
+}
+
+function showColors() {
+  show('colors');
+}
+
+function msg(text) {
+  document.getElementById('colorMsg').innerText = text;
+}
+
+function showFinal() {
+  show('final');
+}
+
+function exit() {
+  window.close();
+  document.body.innerHTML = "<h2>Thank you for visiting 💖</h2>";
+}
+
+function petals() {
+  for (let i = 0; i < 30; i++) {
+    let p = document.createElement('div');
+    p.className = 'petal';
+    p.style.left = Math.random() * 100 + 'vw';
+    p.style.animationDuration = 5 + Math.random() * 5 + 's';
+    p.style.width = p.style.height = 12 + Math.random() * 10 + 'px';
+    p.style.background = '#ffb3c1';
+    p.style.borderRadius = '50%';
+    document.body.appendChild(p);
+  }
+}
+
+/* QR scene detection */
+if (window.location.search.includes('scene=bouquet')) {
+  show('bouquet');
+  petals();
+}
+</script>
+
+</body>
+</html>
